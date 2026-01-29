@@ -22,10 +22,9 @@ uart = busio.UART(
 customCommandMap = {
     "DEFINE": "# Custom command DEFINE placeholder",
     "ATTACK_F": "# Custom command ATTACK_F placeholder",
-    "STRINGLN": "# Custom command STRINGLN placeholder"
 }
 
-# Optional keycode map if you want real key presses
+# Explicit keycode map ONLY (safe on CircuitPython)
 keycodeMap = {
     "ENTER": Keycode.ENTER,
     "GUI": Keycode.GUI,
@@ -54,47 +53,47 @@ keycodeMap = {
     "F10": Keycode.F10,
     "F11": Keycode.F11,
     "F12": Keycode.F12,
-    "SPACEBAR": Keycode.SPACEBAR,
-    "SPACE": Keycode.SPACEBAR
 }
 
-
-buffer = ""  # incoming characters
+buffer = ""
 
 def parse_keycode(key):
-    """Return Keycode for a key string, fallback to Keycode.KEY"""
-    return keycodeMap.get(key.upper(), getattr(Keycode, key.upper(), None))
+    return keycodeMap.get(key.upper())
 
 def parse_keys(parts):
-    """Convert parts into a comma-separated keycode string"""
     keys = []
     for part in parts:
         k = parse_keycode(part)
         if k:
             keys.append(k)
+        # else:
+        #     print("Unknown key:", repr(part))  # optional debug
     return keys
 
 def run_command(command_line):
-    """Convert a single line into HID actions or comments"""
     parts = command_line.strip().split()
     if not parts:
         return
 
     command = parts[0].upper()
 
-    if command == "DELAY":
-        delay_time = float(parts[1]) / 1000.0
-        time.sleep(delay_time)
+    if command == "DELAY" and len(parts) > 1:
+        time.sleep(float(parts[1]) / 1000)
+
     elif command == "STRING":
-        string_content = " ".join(parts[1:])
-        keyboard_layout.write(string_content)
+        keyboard_layout.write(" ".join(parts[1:]))
+
+    elif command == "STRINGLN":
+        keyboard_layout.write(" ".join(parts[1:]))
+        keyboard.send(Keycode.ENTER)
+
     elif command == "REM":
-        # comment, just print for debugging
-        print("# " + " ".join(parts[1:]))
+        print("#", " ".join(parts[1:]))
+
     elif command in customCommandMap:
         print(customCommandMap[command])
+
     else:
-        # treat as key press
         keys = parse_keys(parts)
         if keys:
             keyboard.send(*keys)
@@ -109,13 +108,13 @@ while True:
         except UnicodeError:
             continue
 
-        if c == "\n":
+        if c == "\n" or c == "\r":
             command = buffer.strip()
             buffer = ""
             if command:
                 print("Running command:", command)
                 run_command(command)
-                time.sleep(0.05)  # small delay between commands
+                time.sleep(0.05)
         else:
             buffer += c
 
