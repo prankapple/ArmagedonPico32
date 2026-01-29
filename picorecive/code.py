@@ -6,14 +6,14 @@ from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keycode import Keycode
 from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
 
-# Initialize the keyboard
+# Initialize keyboard
 keyboard = Keyboard(usb_hid.devices)
 keyboard_layout = KeyboardLayoutUS(keyboard)
 
 # UART setup
 uart = busio.UART(
-    board.GP0,  # TX
-    board.GP1,  # RX
+    board.GP0,
+    board.GP1,
     baudrate=115200,
     timeout=0.01
 )
@@ -24,13 +24,17 @@ customCommandMap = {
     "ATTACK_F": "# Custom command ATTACK_F placeholder",
 }
 
-# Explicit keycode map ONLY (safe on CircuitPython)
+# Modifier keys
+modifierKeys = {
+    "CTRL": Keycode.CONTROL,
+    "SHIFT": Keycode.SHIFT,
+    "ALT": Keycode.ALT,
+    "GUI": Keycode.GUI
+}
+
+# Normal keys
 keycodeMap = {
     "ENTER": Keycode.ENTER,
-    "GUI": Keycode.GUI,
-    "SHIFT": Keycode.SHIFT,
-    "CTRL": Keycode.CONTROL,
-    "ALT": Keycode.ALT,
     "TAB": Keycode.TAB,
     "ESC": Keycode.ESCAPE,
     "SPACE": Keycode.SPACEBAR,
@@ -53,22 +57,36 @@ keycodeMap = {
     "F10": Keycode.F10,
     "F11": Keycode.F11,
     "F12": Keycode.F12,
+    # Add letters/numbers if needed
+    "A": Keycode.A, "B": Keycode.B, "C": Keycode.C,
+    "D": Keycode.D, "E": Keycode.E, "F": Keycode.F,
+    "G": Keycode.G, "H": Keycode.H, "I": Keycode.I,
+    "J": Keycode.J, "K": Keycode.K, "L": Keycode.L,
+    "M": Keycode.M, "N": Keycode.N, "O": Keycode.O,
+    "P": Keycode.P, "Q": Keycode.Q, "R": Keycode.R,
+    "S": Keycode.S, "T": Keycode.T, "U": Keycode.U,
+    "V": Keycode.V, "W": Keycode.W, "X": Keycode.X,
+    "Y": Keycode.Y, "Z": Keycode.Z,
+    "0": Keycode.ZERO, "1": Keycode.ONE, "2": Keycode.TWO,
+    "3": Keycode.THREE, "4": Keycode.FOUR, "5": Keycode.FIVE,
+    "6": Keycode.SIX, "7": Keycode.SEVEN, "8": Keycode.EIGHT,
+    "9": Keycode.NINE,
 }
 
 buffer = ""
 
-def parse_keycode(key):
-    return keycodeMap.get(key.upper())
-
+# Parse keys into modifiers and main keys
 def parse_keys(parts):
+    modifiers = []
     keys = []
     for part in parts:
-        k = parse_keycode(part)
-        if k:
-            keys.append(k)
-        # else:
-        #     print("Unknown key:", repr(part))  # optional debug
-    return keys
+        part_upper = part.upper()
+        if part_upper in modifierKeys:
+            modifiers.append(modifierKeys[part_upper])
+        elif part_upper in keycodeMap:
+            keys.append(keycodeMap[part_upper])
+        # else: ignore unknown keys
+    return modifiers, keys
 
 def run_command(command_line):
     parts = command_line.strip().split()
@@ -94,9 +112,12 @@ def run_command(command_line):
         print(customCommandMap[command])
 
     else:
-        keys = parse_keys(parts)
-        if keys:
-            keyboard.send(*keys)
+        # split into modifiers + keys
+        modifiers, keys = parse_keys(parts)
+        if modifiers or keys:
+            keyboard.press(*modifiers)
+            keyboard.send(*keys) if keys else None
+            keyboard.release_all()
 
 print("UART HID listener ready")
 
@@ -119,4 +140,3 @@ while True:
             buffer += c
 
     time.sleep(0.005)
-
