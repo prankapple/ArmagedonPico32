@@ -2,6 +2,8 @@
 A bluetooth controled HID device.
 ## This project is intended for educational and learning purposes only. It is not designed, tested, or intended for use in production, commercial, or real-world environments. The authors assume no responsibility for any misuse of this material.
 
+![pico](docs/pico.jpeg)
+
 ## Conections
 | Pico    | ESP32   |
 | ------- | ------- |
@@ -34,3 +36,7 @@ Example pins:
 ### Usage
 Download the app, install it and conect the esp to the bluetooth with the name **ArmagedonPico32**.
 You can now run HID payloads from the app.
+
+### App
+This is the app
+![app](docs/app.jpeg) 
