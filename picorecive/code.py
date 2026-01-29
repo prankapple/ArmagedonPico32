@@ -54,9 +54,8 @@ keycodeMap = {
     "F10": Keycode.F10,
     "F11": Keycode.F11,
     "F12": Keycode.F12,
-    "NUMLOCK": Keycode.NUM_LOCK,
-    "SCROLLLOCK": Keycode.SCROLL_LOCK,
-    "SPACEBAR": Keycode.SPACEBAR
+    "SPACEBAR": Keycode.SPACEBAR,
+    "SPACE": Keycode.SPACEBAR
 }
 
 
@@ -121,3 +120,4 @@ while True:
             buffer += c
 
     time.sleep(0.005)
+
