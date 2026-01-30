@@ -28,13 +28,14 @@ Example pins:
 
 ### The pico
 - Connect the Raspberry Pi Pico to your computer while holding down the BOOTSEL button. When it appears as a removable storage device, release the BOOTSEL button.
-- Open the **picorecivet** folder from the files provided. Copy the flash_nuke.uf2 file to the Raspberry Pi Pico. Wait until it restarts. This process clears the existing firmware.
+- Open the **picorecive** folder from the files provided. Copy the flash_nuke.uf2 file to the Raspberry Pi Pico. Wait until it restarts. This process clears the existing firmware.
 - Open the **picorecive** folder, Copy the **adafruit-circuitpython-raspberry_pi_pico-en_US-9.1.1.uf2** file to your Raspberry Pi Pico. Wait until it restarts. After restarting, the Pico should appear as a drive named CIRCUITPY.
 - Copy the **adafruit_hid** folder in the lib folder on CIRCUITPY drive, click replace if it asks.
-- Copy the **code.py**, click replace if it asks.
+- Copy the **code.py** and the **boot.py** from the picorecive folder, click replace if it asks.
 
 ### **OPTIONAL**
 By conecting **GPIO10** to **GND** it will not show up in the file finder.
+If not, the opposite will happen.
 
 ### Usage
 Download the app, install it and conect the esp to the bluetooth with the name **ArmagedonPico32**.
