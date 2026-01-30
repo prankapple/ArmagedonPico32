@@ -33,6 +33,9 @@ Example pins:
 - Copy the **adafruit_hid** folder in the lib folder on CIRCUITPY drive, click replace if it asks.
 - Copy the **code.py**, click replace if it asks.
 
+### **OPTIONAL**
+By conecting **GPIO10** to **GND** it will not show up in the file finder.
+
 ### Usage
 Download the app, install it and conect the esp to the bluetooth with the name **ArmagedonPico32**.
 You can now run HID payloads from the app.
